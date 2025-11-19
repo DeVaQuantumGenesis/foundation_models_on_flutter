@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:foundation_models_on_flutter/foundation_models_on_flutter.dart';
@@ -50,12 +51,38 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  final TextEditingController _configController = TextEditingController();
+
+  @override
+  void dispose() {
+    _promptController.dispose();
+    _configController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadModel() async {
     setState(() {
       _isLoading = true;
     });
+
+    Map<String, dynamic>? config;
+    if (_configController.text.isNotEmpty) {
+      try {
+        config = jsonDecode(_configController.text) as Map<String, dynamic>;
+      } catch (e) {
+        setState(() {
+          _response = 'Invalid JSON config: $e';
+          _isLoading = false;
+        });
+        return;
+      }
+    }
+
     try {
-      await _foundationModelsOnFlutterPlugin.loadModel('Llama-3-8B-Instruct');
+      await _foundationModelsOnFlutterPlugin.loadModel(
+        'Llama-3-8B-Instruct',
+        config: config,
+      );
       setState(() {
         _isModelLoaded = true;
         _response = 'Model loaded successfully.';
@@ -109,9 +136,19 @@ class _MyAppState extends State<MyApp> {
             children: [
               Text('Running on: $_platformVersion\n'),
               const SizedBox(height: 20),
+              TextField(
+                controller: _configController,
+                decoration: const InputDecoration(
+                  labelText: 'Model Config (JSON, optional)',
+                  border: OutlineInputBorder(),
+                  hintText: '{"temperature": 0.7}',
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _isLoading ? null : _loadModel,
-                child: const Text('Load Model (Llama-3-8B)'),
+                child: const Text('Load Model'),
               ),
               const SizedBox(height: 20),
               TextField(

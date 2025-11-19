@@ -19,9 +19,13 @@ class MethodChannelFoundationModelsOnFlutter
   }
 
   @override
-  Future<void> loadModel(String modelName) async {
+  Future<void> loadModel(
+    String modelName, {
+    Map<String, dynamic>? config,
+  }) async {
     await methodChannel.invokeMethod<void>('loadModel', {
       'modelName': modelName,
+      'config': config,
     });
   }
 

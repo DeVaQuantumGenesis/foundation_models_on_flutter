@@ -8,8 +8,12 @@ class FoundationModelsOnFlutter {
   /// Loads a Foundation Model by name.
   ///
   /// [modelName] is the identifier of the model to load (e.g., "Llama-3-8B").
-  Future<void> loadModel(String modelName) {
-    return FoundationModelsOnFlutterPlatform.instance.loadModel(modelName);
+  /// [config] is an optional map of configuration parameters.
+  Future<void> loadModel(String modelName, {Map<String, dynamic>? config}) {
+    return FoundationModelsOnFlutterPlatform.instance.loadModel(
+      modelName,
+      config: config,
+    );
   }
 
   /// Generates a response from the loaded model.
