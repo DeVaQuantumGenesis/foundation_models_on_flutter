@@ -19,21 +19,35 @@ class MethodChannelFoundationModelsOnFlutter
   }
 
   @override
-  Future<void> loadModel(
-    String modelName, {
-    Map<String, dynamic>? config,
-  }) async {
-    await methodChannel.invokeMethod<void>('loadModel', {
-      'modelName': modelName,
-      'config': config,
-    });
+  Future<String> checkAvailability() async {
+    final availability = await methodChannel.invokeMethod<String>(
+      'checkAvailability',
+    );
+    return availability ?? 'unavailable';
   }
 
   @override
-  Future<String> generateResponse(String prompt) async {
+  Future<String> createSession({String? instructions}) async {
+    final sessionId = await methodChannel.invokeMethod<String>(
+      'createSession',
+      {if (instructions != null) 'instructions': instructions},
+    );
+    return sessionId ?? '';
+  }
+
+  @override
+  Future<String> generateResponse(
+    String sessionId,
+    String prompt, {
+    Map<String, dynamic>? options,
+  }) async {
     final response = await methodChannel.invokeMethod<String>(
       'generateResponse',
-      {'prompt': prompt},
+      {
+        'sessionId': sessionId,
+        'prompt': prompt,
+        if (options != null) 'options': options,
+      },
     );
     return response ?? '';
   }

@@ -11,11 +11,18 @@ class MockFoundationModelsOnFlutterPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<void> loadModel(String modelName) => Future.value();
+  Future<String> checkAvailability() => Future.value('available');
 
   @override
-  Future<String> generateResponse(String prompt) =>
-      Future.value('Mock response');
+  Future<String> createSession({String? instructions}) =>
+      Future.value('test-session-id');
+
+  @override
+  Future<String> generateResponse(
+    String sessionId,
+    String prompt, {
+    Map<String, dynamic>? options,
+  }) => Future.value('Mock response');
 }
 
 void main() {
@@ -39,16 +46,21 @@ void main() {
     expect(await foundationModelsOnFlutterPlugin.getPlatformVersion(), '42');
   });
 
-  test('loadModel and generateResponse', () async {
+  test('createSession and generateResponse', () async {
     FoundationModelsOnFlutter foundationModelsOnFlutterPlugin =
         FoundationModelsOnFlutter();
     MockFoundationModelsOnFlutterPlatform fakePlatform =
         MockFoundationModelsOnFlutterPlatform();
     FoundationModelsOnFlutterPlatform.instance = fakePlatform;
 
-    await foundationModelsOnFlutterPlugin.loadModel('test-model');
+    final sessionId = await foundationModelsOnFlutterPlugin.createSession();
+    expect(sessionId, 'test-session-id');
+
     expect(
-      await foundationModelsOnFlutterPlugin.generateResponse('hello'),
+      await foundationModelsOnFlutterPlugin.generateResponse(
+        sessionId: sessionId,
+        prompt: 'hello',
+      ),
       'Mock response',
     );
   });

@@ -28,11 +28,19 @@ abstract class FoundationModelsOnFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<void> loadModel(String modelName, {Map<String, dynamic>? config}) {
-    throw UnimplementedError('loadModel() has not been implemented.');
+  Future<String> checkAvailability() {
+    throw UnimplementedError('checkAvailability() has not been implemented.');
   }
 
-  Future<String> generateResponse(String prompt) {
+  Future<String> createSession({String? instructions}) {
+    throw UnimplementedError('createSession() has not been implemented.');
+  }
+
+  Future<String> generateResponse(
+    String sessionId,
+    String prompt, {
+    Map<String, dynamic>? options,
+  }) {
     throw UnimplementedError('generateResponse() has not been implemented.');
   }
 }
